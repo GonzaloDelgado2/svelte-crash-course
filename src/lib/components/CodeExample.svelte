@@ -1,23 +1,38 @@
 <script lang="ts">
+  import { getLang } from '$lib/i18n/language.svelte.js';
+
   let { code, filename }: { code: string; filename?: string } = $props();
   let copied = $state(false);
+  let lang = $derived(getLang());
+  let copyLabel = $derived(lang === 'en' ? 'Copy' : 'Copiar');
+  let copiedLabel = $derived(lang === 'en' ? 'Copied' : 'Copiado');
 
-  function copyCode() {
-    navigator.clipboard.writeText(code);
-    copied = true;
-    setTimeout(() => copied = false, 2000);
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(code);
+      copied = true;
+      setTimeout(() => (copied = false), 2000);
+    } catch {
+      // Clipboard API unavailable (insecure context or older browser); silently ignore.
+    }
   }
 </script>
 
 <div class="code-block">
-  {#if filename}
-    <div class="code-header">
+  <div class="code-header" class:no-filename={!filename}>
+    {#if filename}
       <span class="filename">{filename}</span>
-      <button class="copy-btn" onclick={copyCode}>
-        {copied ? '✓ Copied' : 'Copy'}
-      </button>
-    </div>
-  {/if}
+    {:else}
+      <span class="filename"></span>
+    {/if}
+    <button
+      class="copy-btn"
+      onclick={copyCode}
+      aria-label={copied ? copiedLabel : copyLabel}
+    >
+      {copied ? `✓ ${copiedLabel}` : copyLabel}
+    </button>
+  </div>
   <pre><code>{code}</code></pre>
 </div>
 

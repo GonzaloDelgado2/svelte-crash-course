@@ -1,7 +1,5 @@
 export type Lang = 'en' | 'es';
 
-export type TranslationKey = keyof typeof translations.en;
-
 const translations = {
   home: {
     en: {
@@ -82,7 +80,8 @@ const translations = {
       code: 'Code',
       appFeature: 'App Feature',
       resetCode: 'Reset Code',
-      backToHome: '← Back to Course Home'
+      backToHome: '← Back to Course Home',
+      lesson: 'Lesson'
     },
     es: {
       theory: 'Teoría',
@@ -102,7 +101,8 @@ const translations = {
       code: 'Código',
       appFeature: 'Funcionalidad de la App',
       resetCode: 'Reiniciar Código',
-      backToHome: '← Volver al Inicio'
+      backToHome: '← Volver al Inicio',
+      lesson: 'Lección'
     }
   }
 } as const;

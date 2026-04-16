@@ -1,8 +1,16 @@
 <script lang="ts">
   import Sidebar from '$lib/components/Sidebar.svelte';
   import LanguageToggle from '$lib/components/LanguageToggle.svelte';
+  import { getLang } from '$lib/i18n/language.svelte.js';
 
   let { children } = $props();
+  let lang = $derived(getLang());
+
+  $effect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang;
+    }
+  });
 </script>
 
 <svelte:head>

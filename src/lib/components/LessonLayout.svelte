@@ -2,30 +2,10 @@
   import type { Snippet } from 'svelte';
   import { getLang } from '$lib/i18n/language.svelte.js';
   import translations from '$lib/i18n/translations.js';
+  import { lessonRoutes, lessonHref } from '$lib/lessons.js';
 
   let lang = $derived(getLang());
   let ui = $derived(translations.ui[lang]);
-
-  const lessonSlugs: Record<number, string> = {
-    0: 'js-refresher',
-    1: 'basics',
-    2: 'templating',
-    3: 'events',
-    4: 'bindings',
-    5: 'effects',
-    6: 'state',
-    7: 'styling',
-    8: 'composition',
-    9: 'routing',
-    10: 'loading',
-    11: 'api',
-    12: 'advanced',
-    13: 'final-project'
-  };
-
-  function getSlug(num: number): string {
-    return lessonSlugs[num] || '';
-  }
 
   let {
     lessonNum,
@@ -46,11 +26,18 @@
   } = $props();
 
   let showChallenge = $state(false);
+  let index = $derived(lessonRoutes.findIndex((l) => l.num === lessonNum));
+  let prevHref = $derived(index > 0 ? lessonHref(lessonRoutes[index - 1]) : '/');
+  let nextHref = $derived(
+    index >= 0 && index < lessonRoutes.length - 1 ? lessonHref(lessonRoutes[index + 1]) : '/'
+  );
+  let isFirst = $derived(index <= 0);
+  let isLast = $derived(index === lessonRoutes.length - 1);
 </script>
 
 <div class="lesson">
   <div class="lesson-header">
-    <span class="lesson-badge">Lección {lessonNum}</span>
+    <span class="lesson-badge">{ui.lesson} {lessonNum}</span>
     <h1>{title}</h1>
     <div class="app-feature">
       <span class="feature-icon">🛠️</span>
@@ -97,24 +84,12 @@
   </div>
 
   <div class="lesson-nav">
-    {#if parseInt(lessonNum) > 0}
-      <a class="nav-btn prev" href="/{String(parseInt(lessonNum) - 1).padStart(2, '0')}-{getSlug(parseInt(lessonNum) - 1)}">
-        {ui.prev}
-      </a>
-    {:else}
-      <a class="nav-btn prev" href="/">
-        {ui.backToHome}
-      </a>
-    {/if}
-    {#if parseInt(lessonNum) < 13}
-      <a class="nav-btn next" href="/{String(parseInt(lessonNum) + 1).padStart(2, '0')}-{getSlug(parseInt(lessonNum) + 1)}">
-        {ui.next}
-      </a>
-    {:else}
-      <a class="nav-btn next" href="/">
-        {ui.backToHome}
-      </a>
-    {/if}
+    <a class="nav-btn prev" href={prevHref}>
+      {isFirst ? ui.backToHome : ui.prev}
+    </a>
+    <a class="nav-btn next" href={nextHref}>
+      {isLast ? ui.backToHome : ui.next}
+    </a>
   </div>
 </div>
 

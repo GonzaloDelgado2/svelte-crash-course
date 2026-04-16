@@ -1,27 +1,11 @@
 <script lang="ts">
   import { getLang } from '$lib/i18n/language.svelte.js';
   import translations from '$lib/i18n/translations.js';
+  import { lessonRoutes, lessonHref } from '$lib/lessons.js';
 
   let lang = $derived(getLang());
   let home = $derived(translations.home[lang]);
   let lessons = $derived(translations.lessons[lang]);
-
-  const lessonRoutes = [
-    { num: '00', slug: 'js-refresher' },
-    { num: '01', slug: 'basics' },
-    { num: '02', slug: 'templating' },
-    { num: '03', slug: 'events' },
-    { num: '04', slug: 'bindings' },
-    { num: '05', slug: 'effects' },
-    { num: '06', slug: 'state' },
-    { num: '07', slug: 'styling' },
-    { num: '08', slug: 'composition' },
-    { num: '09', slug: 'routing' },
-    { num: '10', slug: 'loading' },
-    { num: '11', slug: 'api' },
-    { num: '12', slug: 'advanced' },
-    { num: '13', slug: 'final-project' }
-  ];
 </script>
 
 <div class="home">
@@ -45,9 +29,9 @@
   </div>
 
   <div class="lessons-grid">
-    {#each lessonRoutes as lesson, i}
+    {#each lessonRoutes as lesson}
       {@const key = lesson.num as keyof typeof lessons}
-      <a href="/{lesson.num}-{lesson.slug}" class="lesson-card">
+      <a href={lessonHref(lesson)} class="lesson-card">
         <div class="lesson-card-num">{lesson.num}</div>
         <div class="lesson-card-content">
           <h3>{lessons[key].title}</h3>

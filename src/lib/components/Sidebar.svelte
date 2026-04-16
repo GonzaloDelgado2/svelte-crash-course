@@ -1,34 +1,12 @@
 <script lang="ts">
+  import { page } from '$app/state';
   import { getLang } from '$lib/i18n/language.svelte.js';
   import translations from '$lib/i18n/translations.js';
+  import { lessonRoutes, lessonHref } from '$lib/lessons.js';
 
   let lang = $derived(getLang());
   let lessons = $derived(translations.lessons[lang]);
-
-  let currentPath = $state('');
-
-  $effect(() => {
-    if (typeof window !== 'undefined') {
-      currentPath = window.location.pathname;
-    }
-  });
-
-  const lessonRoutes = [
-    { num: '00', slug: 'js-refresher' },
-    { num: '01', slug: 'basics' },
-    { num: '02', slug: 'templating' },
-    { num: '03', slug: 'events' },
-    { num: '04', slug: 'bindings' },
-    { num: '05', slug: 'effects' },
-    { num: '06', slug: 'state' },
-    { num: '07', slug: 'styling' },
-    { num: '08', slug: 'composition' },
-    { num: '09', slug: 'routing' },
-    { num: '10', slug: 'loading' },
-    { num: '11', slug: 'api' },
-    { num: '12', slug: 'advanced' },
-    { num: '13', slug: 'final-project' }
-  ];
+  let currentPath = $derived(page.url.pathname);
 </script>
 
 <aside class="sidebar">
@@ -40,11 +18,11 @@
   <nav class="sidebar-nav">
     {#each lessonRoutes as lesson}
       {@const key = lesson.num as keyof typeof lessons}
-      {@const isActive = currentPath === `/${lesson.num}-${lesson.slug}`}
+      {@const href = lessonHref(lesson)}
       <a
-        href="/{lesson.num}-{lesson.slug}"
+        {href}
         class="sidebar-link"
-        class:active={isActive}
+        class:active={currentPath === href}
       >
         <span class="lesson-num">{lesson.num}</span>
         <span class="lesson-title">{lessons[key].title}</span>

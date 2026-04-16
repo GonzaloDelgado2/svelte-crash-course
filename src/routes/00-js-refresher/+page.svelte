@@ -44,7 +44,7 @@ console.log(processScores([3, -1, 4, -2, 5])); // 24`;
       const fakeConsole = { log: (...args: unknown[]) => logs.push(args.map(String).join(' ')) };
       const fn = new Function('console', jsInput);
       fn(fakeConsole);
-      jsOutput = logs.join('\n') || lang === 'en' ? 'No output' : 'Sin salida';
+      jsOutput = logs.join('\n') || (lang === 'en' ? 'No output' : 'Sin salida');
     } catch (e) {
       jsOutput = `Error: ${(e as Error).message}`;
     }
@@ -440,15 +440,15 @@ taskCount++; // Esto está bien`,
           <h4>{text[lang].topic2Interactive}</h4>
           <div class="arrow-demo">
             <div class="arrow-inputs">
-              <div class="input-group">
-                <label>a = </label>
+              <label class="input-group">
+                <span>a = </span>
                 <input type="number" bind:value={arrowInput1} />
-              </div>
+              </label>
               <span class="operator">+</span>
-              <div class="input-group">
-                <label>b = </label>
+              <label class="input-group">
+                <span>b = </span>
                 <input type="number" bind:value={arrowInput2} />
-              </div>
+              </label>
               <span class="operator">=</span>
               <span class="result">{arrowResult}</span>
             </div>
@@ -465,14 +465,14 @@ taskCount++; // Esto está bien`,
           <h4>{text[lang].topic3Interactive}</h4>
           <p class="label">{text[lang].topic3Label}</p>
           <div class="destruct-demo">
-            <div class="input-row">
-              <label>name:</label>
+            <label class="input-row">
+              <span>name:</span>
               <input type="text" bind:value={destructName} />
-            </div>
-            <div class="input-row">
-              <label>version:</label>
+            </label>
+            <label class="input-row">
+              <span>version:</span>
               <input type="text" bind:value={destructVersion} />
-            </div>
+            </label>
             <div class="destruct-output">
               <pre class="code-inline">const {'{'} name, version, framework {'}'} = obj;</pre>
               <div class="destruct-results">
@@ -659,7 +659,7 @@ taskCount++; // Esto está bien`,
     align-items: center;
     gap: 4px;
   }
-  .input-group label {
+  .input-group > span {
     font-weight: 600;
     font-size: 0.95rem;
   }
@@ -701,7 +701,7 @@ taskCount++; // Esto está bien`,
     align-items: center;
     gap: 8px;
   }
-  .input-row label {
+  .input-row > span {
     font-weight: 500;
     min-width: 70px;
   }

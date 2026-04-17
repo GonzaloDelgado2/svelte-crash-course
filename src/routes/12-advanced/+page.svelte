@@ -12,6 +12,16 @@
   let showSolution = $state(false);
 
   const solutionCode = [
+    '// src/app.d.ts — declare the shape of event.locals so TypeScript is happy',
+    'declare global {',
+    '  namespace App {',
+    '    interface Locals {',
+    '      user?: { id: number; name: string };',
+    '    }',
+    '  }',
+    '}',
+    'export {};',
+    '',
     '// src/hooks.server.ts',
     "import { redirect } from '@sveltejs/kit';",
     "import type { Handle } from '@sveltejs/kit';",

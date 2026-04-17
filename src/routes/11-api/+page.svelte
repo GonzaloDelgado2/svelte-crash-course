@@ -6,14 +6,20 @@
   let lang = $derived(getLang());
 
   let showSolution = $state(false);
-  const solutionCode = `// src/routes/api/quotes/+server.ts
-import { json } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
-
-let quotes = [
+  const solutionCode = `// src/lib/server/quotes.ts — shared store (in-memory)
+export let quotes = [
   { id: 1, text: 'The only way to do great work is to love what you do.', author: 'Steve Jobs' },
   { id: 2, text: 'Talk is cheap. Show me the code.', author: 'Linus Torvalds' },
 ];
+
+export function setQuotes(next: typeof quotes) {
+  quotes = next;
+}
+
+// src/routes/api/quotes/+server.ts
+import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
+import { quotes, setQuotes } from '$lib/server/quotes';
 
 export const GET: RequestHandler = async () => {
   return json(quotes);
@@ -21,14 +27,16 @@ export const GET: RequestHandler = async () => {
 
 export const POST: RequestHandler = async ({ request }) => {
   const body = await request.json();
-  const newQuote = { id: Date.now(), ...body };
-  quotes = [...quotes, newQuote];
+  // Spread body first so the server-generated id cannot be overridden by the client.
+  const newQuote = { ...body, id: Date.now() };
+  setQuotes([...quotes, newQuote]);
   return json(newQuote, { status: 201 });
 };
 
 // src/routes/api/quotes/[id]/+server.ts
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { quotes, setQuotes } from '$lib/server/quotes';
 
 export const GET: RequestHandler = async ({ params }) => {
   const quote = quotes.find(q => q.id === Number(params.id));
@@ -37,7 +45,7 @@ export const GET: RequestHandler = async ({ params }) => {
 };
 
 export const DELETE: RequestHandler = async ({ params }) => {
-  quotes = quotes.filter(q => q.id !== Number(params.id));
+  setQuotes(quotes.filter(q => q.id !== Number(params.id)));
   return json({ success: true });
 };`;
 

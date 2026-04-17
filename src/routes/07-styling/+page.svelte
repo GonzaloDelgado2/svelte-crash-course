@@ -69,10 +69,11 @@
     padding: 1rem 1.5rem; border-radius: 12px;
     border-left: 4px solid var(--color);
     background: var(--bg); color: var(--text);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s,
+                background-color 0.2s, color 0.2s, border-color 0.2s;
   }
   .notification:hover {
-    transform: translateY(-2px);
+    transform: scale(1.03);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
   .notification[data-type="success"] {

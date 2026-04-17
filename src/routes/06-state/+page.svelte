@@ -55,30 +55,32 @@
   let settingsLang = $state<'en' | 'es'>('en');
 
   let showSolution = $state(false);
-  const solutionCode = `\x3Cscript lang="ts">
-  class ShoppingList {
-    items = $state<{ id: number; name: string; bought: boolean }[]>([]);
+  const solutionCode = `// src/lib/shopping-list.svelte.ts — shared instance so any component can import it
+class ShoppingList {
+  items = $state<{ id: number; name: string; bought: boolean }[]>([]);
+  total = $derived(this.items.length);
+  bought = $derived(this.items.filter(i => i.bought).length);
 
-    get total() { return this.items.length; }
-    get bought() { return this.items.filter(i => i.bought).length; }
-
-    addItem(name: string) {
-      this.items = [...this.items, { id: Date.now(), name, bought: false }];
-    }
-
-    removeItem(id: number) {
-      this.items = this.items.filter(i => i.id !== id);
-    }
-
-    toggleItem(id: number) {
-      this.items = this.items.map(i =>
-        i.id === id ? { ...i, bought: !i.bought } : i
-      );
-    }
+  addItem(name: string) {
+    this.items = [...this.items, { id: Date.now(), name, bought: false }];
   }
 
-  let list = new ShoppingList();
-\x3C/script>`;
+  removeItem(id: number) {
+    this.items = this.items.filter(i => i.id !== id);
+  }
+
+  toggleItem(id: number) {
+    this.items = this.items.map(i =>
+      i.id === id ? { ...i, bought: !i.bought } : i
+    );
+  }
+}
+
+export const list = new ShoppingList();
+
+// In any component, just:
+//   import { list } from '$lib/shopping-list.svelte';
+// Both components read/write the same reactive instance.`;
 
   const text = {
     en: {

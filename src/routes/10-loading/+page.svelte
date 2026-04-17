@@ -5,9 +5,9 @@
 
   let showSolution = $state(false);
   const solutionCode = `// src/routes/profile/+page.server.ts
-import type { PageLoad } from './$types';
+import type { PageServerLoad } from './$types';
 
-export const load: PageLoad = async () => {
+export const load: PageServerLoad = async () => {
   // Simulate database fetch
   return {
     user: {

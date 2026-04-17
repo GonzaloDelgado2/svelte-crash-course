@@ -33,7 +33,14 @@
       \x3C/li>
     {/each}
   \x3C/ul>
-{/if}`;
+{/if}
+
+\x3Cstyle>
+  .completed {
+    text-decoration: line-through;
+    color: #888;
+  }
+\x3C/style>`;
 
   let tasks = $state<{ id: number; title: string; done: boolean; priority: 'low' | 'medium' | 'high' }[]>([
     { id: 1, title: lang === 'en' ? 'Learn Svelte' : 'Aprender Svelte', done: false, priority: 'high' },

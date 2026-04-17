@@ -37,26 +37,30 @@
   let showSolution = $state(false);
 
   const solutionCode = [
-    '// Add these state variables to the script:',
+    '// Add this state variable to the script:',
     'let editingId = $state<number | null>(null);',
     '',
-    '// Modify the addRecipe function:',
+    '// Replace addRecipe() with saveRecipe():',
     'function saveRecipe() {',
+    '  const name = formName.trim();',
+    "  const ingredients = formIngredients.split(',').map(s => s.trim()).filter(Boolean);",
+    '  if (!name || ingredients.length === 0) return;',
+    '',
     '  if (editingId !== null) {',
     '    // Update existing recipe',
-    '    recipes = recipes.map(r => r.id === editingId ? {',
-    '      ...r,',
-    '      name: formName.trim(),',
-    "      ingredients: formIngredients.split(',').map(s => s.trim()).filter(Boolean),",
-    '      category: formCategory,',
-    '      difficulty: formDifficulty',
-    '    } : r);',
-    '    editingId = null;',
+    '    recipes = recipes.map(r =>',
+    '      r.id === editingId',
+    '        ? { ...r, name, ingredients, category: formCategory, difficulty: formDifficulty }',
+    '        : r',
+    '    );',
     '  } else {',
-    '    // Add new recipe (existing logic)',
-    '    recipes = [...recipes, { id: Date.now(), name: formName.trim(), ... }];',
+    '    // Add new recipe',
+    '    recipes = [',
+    '      ...recipes,',
+    '      { id: Date.now(), name, ingredients, category: formCategory, difficulty: formDifficulty, favorite: false }',
+    '    ];',
     '  }',
-    '  // Reset form...',
+    '  resetForm();',
     '}',
     '',
     'function editRecipe(recipe: Recipe) {',
@@ -68,13 +72,25 @@
     '  showForm = true;',
     '}',
     '',
-    '// In the template, change the button to:',
+    'function resetForm() {',
+    '  editingId = null;',
+    "  formName = '';",
+    "  formIngredients = '';",
+    "  formCategory = 'lunch';",
+    "  formDifficulty = 'easy';",
+    '  showForm = false;',
+    '}',
+    '',
+    '<!-- Add to each recipe card: -->',
     '<button onclick={() => editRecipe(recipe)}>Edit</button>',
     '',
-    '// Change form submit button text based on mode:',
+    '<!-- In the form: -->',
     '<button type="submit">',
-    "  {editingId ? 'Update Recipe' : 'Add Recipe'}",
-    '</button>'
+    "  {editingId !== null ? 'Update Recipe' : 'Add Recipe'}",
+    '</button>',
+    '{#if editingId !== null}',
+    '  <button type="button" onclick={resetForm}>Cancel Edit</button>',
+    '{/if}'
   ].join('\n');
 
   $effect(() => {
@@ -94,7 +110,7 @@
     }
   });
 
-  let filteredRecipes = $derived(() => {
+  let filteredRecipes = $derived.by(() => {
     let result = recipes;
     if (filter !== 'all') {
       result = result.filter(r => r.category === filter);
@@ -113,7 +129,7 @@
   });
 
   let totalCount = $derived(recipes.length);
-  let filteredCount = $derived(filteredRecipes().length);
+  let filteredCount = $derived(filteredRecipes.length);
   let favoriteCount = $derived(recipes.filter(r => r.favorite).length);
 
   function toggleFavorite(id: number) {
@@ -281,13 +297,13 @@
       {/if}
 
       <div class="recipes-grid">
-        {#if filteredRecipes().length === 0}
+        {#if filteredRecipes.length === 0}
           <div class="empty-state">
             <p class="empty-icon">🍽️</p>
             <p>{lang === 'en' ? 'No recipes found. Try a different filter or add a new recipe!' : 'No se encontraron recetas. ¡Prueba un filtro diferente o agrega una nueva receta!'}</p>
           </div>
         {:else}
-          {#each filteredRecipes() as recipe (recipe.id)}
+          {#each filteredRecipes as recipe (recipe.id)}
             <div class="recipe-card">
               <div class="card-header">
                 <span class="card-category">

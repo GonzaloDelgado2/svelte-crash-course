@@ -6,21 +6,21 @@
   let lang = $derived(getLang());
 
   let showSolution = $state(false);
-  const exerciseSolution = `const processScores = (scores: number[]): number => {
+  const exerciseSolution = `const processScores = ({ scores }: { scores: number[] }): number => {
   const filtered = scores.filter(s => s >= 0);
   const doubled = filtered.map(s => s * 2);
   return doubled.reduce((sum, n) => sum + n, 0);
 };
 
-// Or as a one-liner:
-const processScores2 = (scores: number[]): number =>
+// Or as a one-liner using destructured params:
+const processScores2 = ({ scores }: { scores: number[] }): number =>
   scores
     .filter(s => s >= 0)
     .map(s => s * 2)
     .reduce((sum, n) => sum + n, 0);
 
 // Test it:
-console.log(processScores([3, -1, 4, -2, 5])); // 24`;
+console.log(processScores({ scores: [3, -1, 4, -2, 5] })); // 24`;
 
   let jsInput = $state('const name = "Svelte";\nconsole.log(name);');
   let jsOutput = $state('');
